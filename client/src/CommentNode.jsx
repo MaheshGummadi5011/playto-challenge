@@ -8,14 +8,15 @@ const CommentNode = ({ comment, postId, onReplyAdded }) => {
 
   const handleVote = async () => {
     try {
-      // Calls our Concurrency-Proof API
       await axios.post('https://playto-challenge-foy8.onrender.com/api/vote/', {
-        type: 'comment',
+        type: 'comment',   // MUST be 'comment'
         id: comment.id
       });
-      alert("Upvoted! (Refresh to see karma change)");
+      
+      alert("Upvoted! Refresh to see karma change.");
     } catch (err) {
-      alert(err.response?.data?.error || "Error voting");
+      console.error("Error voting:", err);
+      alert("Failed to vote.");
     }
   };
 
