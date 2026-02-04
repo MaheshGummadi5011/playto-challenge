@@ -8,6 +8,7 @@ from django.db import transaction, IntegrityError
 from django.utils import timezone
 from datetime import timedelta
 from django.contrib.contenttypes.models import ContentType
+from django.shortcuts import get_object_or_404  # Essential for fetching objects safely
 
 from .models import Post, Comment, Vote, User
 from .serializers import PostSerializer, PostDetailSerializer, CommentSerializer
@@ -58,43 +59,43 @@ class CommentCreateView(generics.CreateAPIView):
             
         serializer.save(author=author, post=post)
 
-# 4. The Vote Button (Concurrency Fix + Guest Support)
+# 4. The Vote Button (Concurrency Fix + Guest Support + Receiver Fix)
 @api_view(['POST'])
 def vote(request):
     try:
         # 1. HANDLE THE USER
-        # If they are logged in, use their account.
-        # If they are anonymous (like on Vercel), use a "Guest" account.
         if request.user.is_authenticated:
             voter = request.user
         else:
             voter, created = User.objects.get_or_create(username='guest')
             
         # 2. GET DATA
-        # Support both 'type' and 'content_type' keys for safety
-        content_type_str = request.data.get('content_type')
-        if not content_type_str:
-            content_type_str = request.data.get('type')
-
-        # Support both 'id' and 'object_id' keys for safety
-        object_id = request.data.get('object_id')
-        if not object_id:
-            object_id = request.data.get('id')
+        # Support both naming conventions for safety
+        content_type_str = request.data.get('content_type') or request.data.get('type')
+        object_id = request.data.get('object_id') or request.data.get('id')
         
-        # 3. IDENTIFY OBJECT
+        # 3. IDENTIFY OBJECT & OWNER (The Fix for NULL constraint)
         if content_type_str == 'post':
+            target_obj = get_object_or_404(Post, pk=object_id)
             content_type = ContentType.objects.get_for_model(Post)
+            points = 5
         elif content_type_str == 'comment':
+            target_obj = get_object_or_404(Comment, pk=object_id)
             content_type = ContentType.objects.get_for_model(Comment)
+            points = 1
         else:
             return Response({'error': 'Invalid type'}, status=400)
 
-        # 4. SAVE VOTE (Using get_or_create to prevent race conditions)
+        # 4. SAVE VOTE
+        # We MUST include 'receiver' in defaults so the DB knows who gets the points
         vote_obj, created = Vote.objects.get_or_create(
             voter=voter,
             content_type=content_type,
             object_id=object_id,
-            defaults={'points': 5 if content_type_str == 'post' else 1}
+            defaults={
+                'points': points,
+                'receiver': target_obj.author  # <--- Essential Line
+            }
         )
         
         if not created:
