@@ -12,19 +12,19 @@ function App() {
   const [postComments, setPostComments] = useState([]);
 
   const fetchPosts = async () => {
-    const res = await axios.get('http://localhost:8000/api/posts/');
+    const res = await axios.get('https://playto-challenge-foy8.onrender.com/api/posts/');
     setPosts(res.data);
   };
 
   const fetchLeaderboard = async () => {
-    const res = await axios.get('http://localhost:8000/api/leaderboard/');
+    const res = await axios.get('https://playto-challenge-foy8.onrender.com/api/leaderboard/');
     setLeaderboard(res.data);
   };
 
   // NEW: Function to handle liking a POST
   const handlePostVote = async (postId) => {
     try {
-      await axios.post('http://localhost:8000/api/vote/', {
+      await axios.post('https://playto-challenge-foy8.onrender.com/api/vote/', {
         type: 'post',
         id: postId
       });
@@ -42,7 +42,7 @@ function App() {
       setExpandedPostId(null);
       return;
     }
-    const res = await axios.get(`http://localhost:8000/api/posts/${postId}/`);
+    const res = await axios.get(`https://playto-challenge-foy8.onrender.com/api/posts/${postId}/`);
     setPostComments(res.data.comments);
     setExpandedPostId(postId);
   };
