@@ -9,7 +9,7 @@ const CommentNode = ({ comment, postId, onReplyAdded }) => {
   const handleVote = async () => {
     try {
       // Calls our Concurrency-Proof API
-      await axios.post('http://127.0.0.1:8000/api/vote/', {
+      await axios.post('https://playto-challenge-foy8.onrender.com/api/vote/', {
         type: 'comment',
         id: comment.id
       });
@@ -21,7 +21,7 @@ const CommentNode = ({ comment, postId, onReplyAdded }) => {
 
   const submitReply = async () => {
     try {
-      await axios.post(`http://localhost:8000/api/posts/${postId}/comment/`, {
+      await axios.post(`https://playto-challenge-foy8.onrender.com/api/posts/${postId}/comment/`, {
         content: replyText,
         parent: comment.id // Link to this comment as parent
       });
