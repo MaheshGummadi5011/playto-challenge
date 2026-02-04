@@ -3,7 +3,7 @@
 ### A Full-Stack Social Feed with High-Performance Optimization
 
 ![Status](https://img.shields.io/badge/Status-Complete-success)
-![Stack](https://img.shields.io/badge/Tech-Django_%7C_React_%7C_SQL-blue)
+![Stack](https://img.shields.io/badge/Tech-React_%7C_Django_%7C_SQL-blue)
 
 ## 📋 Overview
 This project is a prototype of a Reddit-style community feed built to demonstrate solutions to complex backend engineering problems. It features threaded comments, real-time leaderboard aggregation, and concurrency-safe voting.
@@ -16,24 +16,56 @@ This project is a prototype of a Reddit-style community feed built to demonstrat
 ---
 
 ## 🛠️ Tech Stack
-* **Backend:** Python, Django Rest Framework (DRF)
-* **Frontend:** React (Vite), Tailwind CSS v4
-* **Database:** SQLite (Prototyping), extensible to PostgreSQL
+* **Frontend:** React 18, Vite, Tailwind CSS v4
+* **Backend:** Python 3.x, Django 5, Django Rest Framework (DRF)
+* **Database:** SQLite (Prototyping)
 
 ---
 
-## ⚡ Setup Guide
+## ⚡ Full Setup Guide
 
-### 1. Backend (Django)
+Follow these steps to run the project locally.
+
+### 1. Prerequisites
+Ensure you have the following installed:
+* Node.js (v18 or higher)
+* Python (v3.10 or higher)
+* Git
+
+### 2. Frontend Setup (React)
+Open a terminal window and navigate to the `client` folder.
+
 ```bash
-# Navigate to the root folder
-cd playto_challenge
+# 1. Navigate to the frontend directory
+cd client
 
-# Activate Virtual Environment (Windows)
+# 2. Install Node packages
+npm install
+
+# 3. Start the development server
+npm run dev
+```
+### 3. Backend Setup (Django)
+Open a terminal in the project root directory.
+
+```bash
+# 1. Create a virtual environment
+python -m venv venv
+
+# 2. Activate the virtual environment
+# Windows:
 venv\Scripts\activate
+# Mac/Linux:
+# source venv/bin/activate
 
-# Install Dependencies
+# 3. Install dependencies
 pip install django djangorestframework django-cors-headers
 
-# Run the Server
+# 4. Apply database migrations
+python manage.py migrate
+
+# 5. Create a superuser (for Admin panel access)
+python manage.py createsuperuser
+
+# 6. Run the server
 python manage.py runserver
